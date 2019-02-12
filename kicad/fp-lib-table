@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name XBee)(type KiCad)(uri ${KIPRJMOD}/Libs/XBee.pretty)(options "")(descr ""))
+)

@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "SNM32Cube",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/gcc-arm-none-eabi/arm-none-eabi/include/**",
+                "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/**"
+            ],
+            "defines": [
+                "STM32L031xx",
+                "USE_HAL_DRIVER"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceRoot}",
+                    "/opt/gcc-arm-none-eabi"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}

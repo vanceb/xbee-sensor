@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP XBee_Module_TH
+D XBee House shaped module
+K xbee zigbee
+$ENDCMP
+#
+#End Doc Library

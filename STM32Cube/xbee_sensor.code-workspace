@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "/home/vance/Dropbox/Projects/SEGGER_Nucleo",
+			"name": "SEGGER_Nucleo"
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.linux": {
+			"PATH": "/home/vance/.platformio/penv/bin:/home/vance/.platformio/penv:/home/vance/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
+			"PLATFORMIO_CALLER": "vscode"
+		}
+	}
+}
