@@ -30,3 +30,6 @@ STM32CUBE/build
 
 # OSX cruft
 .DS_Store
+
+# Don't want to put datasheets into git
+datasheets

@@ -1,4 +1,4 @@
 (sym_lib_table
-  (lib (name XBee)(type Legacy)(uri /Users/vance/Dropbox/Projects/xbee-sensor/kicad/Libs/XBee.lib)(options "")(descr ""))
+  (lib (name XBee)(type Legacy)(uri ${KIPRJMOD}/Libs/XBee.lib)(options "")(descr ""))
   (lib (name xbee-sensor-rescue)(type Legacy)(uri ${KIPRJMOD}/xbee-sensor-rescue.lib)(options "")(descr ""))
 )
