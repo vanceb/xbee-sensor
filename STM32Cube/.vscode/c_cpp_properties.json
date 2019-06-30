@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "SNM32Cube",
+            "name": "STM32Cube",
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/gcc-arm-none-eabi/arm-none-eabi/include/**",
