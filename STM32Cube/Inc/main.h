@@ -82,20 +82,26 @@ void Error_Handler(void);
 #define SOLAR_SENSE_GPIO_Port GPIOA
 #define BATTERY_SENSE_Pin GPIO_PIN_1
 #define BATTERY_SENSE_GPIO_Port GPIOA
+#define XB_TX_Pin GPIO_PIN_2
+#define XB_TX_GPIO_Port GPIOA
+#define XB_RX_Pin GPIO_PIN_3
+#define XB_RX_GPIO_Port GPIOA
 #define XB_RESET_Pin GPIO_PIN_4
 #define XB_RESET_GPIO_Port GPIOA
 #define XB_SLEEP_REQ_Pin GPIO_PIN_5
 #define XB_SLEEP_REQ_GPIO_Port GPIOA
 #define XB_ON_Pin GPIO_PIN_6
 #define XB_ON_GPIO_Port GPIOA
-#define EN_XBEE_Pin GPIO_PIN_7
-#define EN_XBEE_GPIO_Port GPIOA
-#define HALL_Pin GPIO_PIN_8
-#define HALL_GPIO_Port GPIOA
+#define XB_EN_Pin GPIO_PIN_7
+#define XB_EN_GPIO_Port GPIOA
+#define PIR_Pin GPIO_PIN_8
+#define PIR_GPIO_Port GPIOA
 #define EN_PIR_Pin GPIO_PIN_11
 #define EN_PIR_GPIO_Port GPIOA
-#define PIR_Pin GPIO_PIN_12
-#define PIR_GPIO_Port GPIOA
+#define HALL_Pin GPIO_PIN_12
+#define HALL_GPIO_Port GPIOA
+#define LED_EN_Pin GPIO_PIN_15
+#define LED_EN_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

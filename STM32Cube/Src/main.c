@@ -44,6 +44,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "SEGGER_RTT.h"
+#include "ssd1306_i2c.h"
+#include "ssd1306_fonts.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,6 +92,27 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void scan_I2C(I2C_HandleTypeDef *hi2c)
+{
+  SEGGER_RTT_printf(0, "Starting I2C Scan...\n");
+  for (int i=0; i<127; i++) {
+    if ((HAL_I2C_IsDeviceReady(hi2c, (uint8_t)(i<<1), 1, 2)) == HAL_OK) {
+      SEGGER_RTT_printf(0, "Response from 0x%2X\n", i);
+    }
+  }
+  SEGGER_RTT_printf(0, "Finished I2C Scan\n");
+}
+
+void xbee_on(void)
+{
+  SEGGER_RTT_printf(0, "Turning XBee Radio on\n");
+  /* Turn on the power to the module */
+  HAL_GPIO_WritePin(XB_EN_GPIO_Port, XB_EN_Pin, GPIO_PIN_RESET);
+  /* Set the NOT_RESET pin - resets on logic 0 */
+  HAL_GPIO_WritePin(XB_RESET_GPIO_Port, XB_RESET_Pin, GPIO_PIN_SET);
+  /* Do not request sleep - Pin_Sleep (Pin 9) requires SM=1 in configuration of the module */
+  HAL_GPIO_WritePin(XB_SLEEP_REQ_GPIO_Port, XB_SLEEP_REQ_Pin, GPIO_PIN_RESET);
+}
 
 /* USER CODE END 0 */
 
@@ -132,6 +156,18 @@ int main(void)
   for (int i=0; i<4; i++){
     ADC_raw[i] = 0;
   }
+
+  scan_I2C(&hi2c1);
+
+  xbee_on();
+
+  /* Test SSD1306 */
+  ssd1306_Init();
+  ssd1306_Fill(Black);
+  ssd1306_SetCursor(2, 0);
+  ssd1306_WriteString("Vance", Font_11x18, White);
+  ssd1306_UpdateScreen();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,19 +175,23 @@ int main(void)
   int i = 0;
   uint8_t hall = 0;
   uint8_t pir = 0;
+  uint8_t is_asleep = 0;
+
   while (1)
   {
-    /* Start ADC conversion using interrupts */
+    /* Start ADC conversion using DMA */
     HAL_ADC_Start_DMA(&hadc, (uint32_t*) ADC_raw, 4);
     /* Read digital pins */
     hall = HAL_GPIO_ReadPin(HALL_GPIO_Port, HALL_Pin);
     pir = HAL_GPIO_ReadPin(PIR_GPIO_Port, PIR_Pin);
+    is_asleep = HAL_GPIO_ReadPin(XB_ON_GPIO_Port, XB_ON_Pin);
     
     /* Print debug to segger */
-    SEGGER_RTT_printf(0, "%d: Hall - %d   PIR - %d  Solar - %d  Battery - %d   Ref - %d   Temp - %d\n", i, hall, pir, ADC_raw[0], ADC_raw[1], ADC_raw[2], ADC_raw[3]);
+    SEGGER_RTT_printf(0, "%d: XBee - %d  Hall - %d   PIR - %d  Solar - %d  Battery - %d   Ref - %d   Temp - %d\n", i, is_asleep, hall, pir, ADC_raw[0], ADC_raw[1], ADC_raw[2], ADC_raw[3]);
 
-    if (i++ % 100 == 0)
+    if (i++ % 5 == 0)
     {
+      SEGGER_RTT_printf(0, "Toggling PIR Pin\n");
       HAL_GPIO_TogglePin(EN_PIR_GPIO_Port, EN_PIR_Pin);
     }
 
@@ -440,17 +480,20 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, XB_RESET_Pin|XB_SLEEP_REQ_Pin|EN_XBEE_Pin|EN_PIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, XB_RESET_Pin|XB_SLEEP_REQ_Pin|XB_EN_Pin|EN_PIR_Pin 
+                          |LED_EN_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : XB_RESET_Pin XB_SLEEP_REQ_Pin EN_XBEE_Pin EN_PIR_Pin */
-  GPIO_InitStruct.Pin = XB_RESET_Pin|XB_SLEEP_REQ_Pin|EN_XBEE_Pin|EN_PIR_Pin;
+  /*Configure GPIO pins : XB_RESET_Pin XB_SLEEP_REQ_Pin XB_EN_Pin EN_PIR_Pin 
+                           LED_EN_Pin */
+  GPIO_InitStruct.Pin = XB_RESET_Pin|XB_SLEEP_REQ_Pin|XB_EN_Pin|EN_PIR_Pin 
+                          |LED_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : XB_ON_Pin HALL_Pin */
-  GPIO_InitStruct.Pin = XB_ON_Pin|HALL_Pin;
+  /*Configure GPIO pins : XB_ON_Pin PIR_Pin */
+  GPIO_InitStruct.Pin = XB_ON_Pin|PIR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -463,17 +506,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PIR_Pin */
-  GPIO_InitStruct.Pin = PIR_Pin;
+  /*Configure GPIO pin : HALL_Pin */
+  GPIO_InitStruct.Pin = HALL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(PIR_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(HALL_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -3,7 +3,7 @@
         {
             "name": "STM32Cube",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceRoot}/**",
                 "/opt/gcc-arm-none-eabi/arm-none-eabi/include/**",
                 "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/**"
             ],
