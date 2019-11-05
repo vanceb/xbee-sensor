@@ -8,7 +8,7 @@
 #ifndef __SSD1306_H__
 #define __SSD1306_H__
 
-#include "stm32L0xx_hal.h"
+#include "stm32l0xx_hal.h"
 
 #include "ssd1306_fonts.h"
 

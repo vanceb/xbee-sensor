@@ -165,7 +165,7 @@ int main(void)
   ssd1306_Init();
   ssd1306_Fill(Black);
   ssd1306_SetCursor(2, 0);
-  ssd1306_WriteString("Vance", Font_11x18, White);
+  ssd1306_WriteString("Vance is Ace", Font_11x18, White);
   ssd1306_UpdateScreen();
 
   /* USER CODE END 2 */

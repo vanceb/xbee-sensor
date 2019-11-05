@@ -26,7 +26,7 @@ _autosave-*
 *.csv
 
 # STM32 Cube
-STM32CUBE/build
+STM32Cube/build
 
 # OSX cruft
 .DS_Store
